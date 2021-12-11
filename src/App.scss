@@ -41,9 +41,11 @@ body {
 }
 
 .boundary {
-	$w: 96vw;
-	width: $w;
-	height: $w / 16 * 9;
+	// $w: 96vw;
+	// width: $w;
+	// height: $w / 16 * 9;
+	width: 90vw;
+	height: 80vh;
 	background-color: $main;
 	color: #fff;
 	position: relative;
