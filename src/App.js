@@ -20,6 +20,7 @@ class App extends Component {
 			count: 6,
 			countdown: null, // setTimeout for hiding numbers after some time
 			showExperimental: false,
+			showOutlines: false,
 		};
 	}
 
@@ -123,6 +124,7 @@ class App extends Component {
 		const number = parseInt(target.textContent);
 		if (this.state.stage !== 'postgame') {
 
+
 			if (number === this.state.index && number < this.state.count) {
 				console.log('Correct');
 				this.setState({
@@ -130,18 +132,23 @@ class App extends Component {
 				});
 			} else if (number === this.state.index && number === this.state.count) {
 				console.log('Finished!');
+				gsap.globalTimeline.clear();
 				this.setState({
 					passed: true,
 					stage: 'postgame',
 					status: 'Passed'
 				});
-			} else {
+			} else if (number > this.state.index) {
 				console.log('Wrong');
+				gsap.globalTimeline.clear();
 				this.setState({
 					failed: true,
 					stage: 'postgame',
 					status: 'Failed'
 				});
+			} else {
+				// When the tile's number is lower than the current target
+				console.log('Repeat?')
 			}
 		}
 	};
@@ -189,7 +196,8 @@ class App extends Component {
 		// Remove all animation timelines by setting the progress to the end of the timelines.
 		// | Note: Tried using other gsap functions specifically for killing timelines/tweens, 
 		// | but they didn't work for me. This workaround seems to do the job.
-		gsap.globalTimeline.progress(1);
+		// gsap.globalTimeline.progress(1);
+		gsap.globalTimeline.clear();
 
 		console.debug('globalTL children:', gsap.globalTimeline.getChildren());
 	};
@@ -200,12 +208,17 @@ class App extends Component {
 			<div id="app" className={classNames("app", {
 				'is-playing': this.state.stage === 'playing',
 				'is-learning': this.state.stage === 'learning',
+				'show-outlines': this.state.showOutlines === true,
 			})}>
 				<main className="container">
 
 					<div id="boundary" className="boundary">
 						{Array(this.state.count).fill('😎').map((x, i) => {
 							const num = i + 1;
+							// Stack tiles so the lowest number is on top. The formula below will result 
+							// in the last number having a z-index of 1. If this z-index range is problematic, 
+							// just shift the range by adding an arbitrary number to the formula
+							const zIndex = this.state.count - i;
 							return (
 								<div
 									id={`tile-${num}`}
@@ -214,6 +227,7 @@ class App extends Component {
 									className={classNames("tile", {
 										correct: num < this.state.index || this.state.passed === true,
 									})}
+									style={{ zIndex, }}
 								>
 									{num}
 								</div>
@@ -259,23 +273,46 @@ class App extends Component {
 
 					{/* Toolbar for Options and Controls ========================================*/}
 					<aside id='controls' className='toolbar'>
-						<div className="control-group test-group">
-							<button 
-							className="btn btn-blank" 
-							id="toggle-exp" 
-							onClick={this.toggleExperimental}
+						<div className="control-group left-group">
+							<button
+								className="btn btn-blank"
+								id="toggle-exp"
+								onClick={this.toggleExperimental}
 								title='Experimental features that could be unstable'
 							>
 								<i className="fas fa-flask"></i>
 							</button>
-							<div className={classNames("control-group playback-group", { hidden: !this.state.showExperimental })}>
-							{/* <div className={"control-group playback-group"}> */}
-								<button id="resume" className='btn btn-blank' onClick={this.handleResume}>
-									<i className="fas fa-play"></i>
+
+							<div className={classNames("control-group test-group", { hidden: !this.state.showExperimental })}>
+							
+								<button 
+									id="outlines" 
+									className="btn btn-blank" 
+									onClick={this.toggleOutlines}
+									title="Show outlines"
+								>
+									<i className="fas fa-vector-square"></i>
 								</button>
-								<button id="pause" className='btn btn-blank' onClick={this.handlePause}>
-									<i className="fas fa-pause"></i>
-								</button>
+
+								<div className={classNames("control-group playback-group")}>
+									<button 
+										id="resume" 
+										className='btn btn-blank' 
+										onClick={this.handleResume}
+										title="Resume movement"
+									> 
+										<i className="fas fa-play"></i> 
+									</button>
+									
+									<button 
+										id="pause" 
+										className='btn btn-blank' 
+										onClick={this.handlePause}
+										title="Pause movement"
+									> 
+										<i className="fas fa-pause"></i> 
+									</button>
+								</div>
 							</div>
 						</div>
 
@@ -297,6 +334,12 @@ class App extends Component {
 	};
 
 
+	toggleOutlines = event => {
+		event.preventDefault();
+		this.setState({
+			showOutlines: !this.state.showOutlines,
+		});
+	};
 	toggleExperimental = event => {
 		event.preventDefault();
 		this.setState({
