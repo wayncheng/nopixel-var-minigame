@@ -211,6 +211,7 @@ class App extends Component {
 				'show-outlines': this.state.showOutlines === true,
 			})}>
 				<main className="container">
+					<h1>NoPixel VAR Hacking Minigame</h1>
 
 					<div id="boundary" className="boundary">
 						{Array(this.state.count).fill('😎').map((x, i) => {
@@ -242,9 +243,7 @@ class App extends Component {
 								<i className="fas fa-user-secret"></i>
 								{/* Show result if post-game */}
 								{(this.state.stage === 'postgame' && this.state.status !== '') && (
-									// <React.Fragment>
 									<h2>{this.state.passed === true ? `Security Clearance Accepted` : `Failed Security Clearance`}</h2>
-									// </React.Fragment>
 								)}
 
 								{/* Show VR Icon if pre-game */}
@@ -273,18 +272,22 @@ class App extends Component {
 
 					{/* Toolbar for Options and Controls ========================================*/}
 					<aside id='controls' className='toolbar'>
-						<div className="control-group left-group">
-							<button
-								className="btn btn-blank"
-								id="toggle-exp"
-								onClick={this.toggleExperimental}
-								title='Experimental features that could be unstable'
-							>
-								<i className="fas fa-flask"></i>
-							</button>
+
+						<div className="control-group count-group">
+							<input
+								type="number"
+								name="count"
+								id="count"
+								value={this.state.count}
+								onChange={this.handleCountChange}
+							/>
+							<label htmlFor="count">Number of Tiles</label>
+						</div>
+
+
+						<div className="control-group right-group">
 
 							<div className={classNames("control-group test-group", { hidden: !this.state.showExperimental })}>
-							
 								<button 
 									id="outlines" 
 									className="btn btn-blank" 
@@ -314,17 +317,15 @@ class App extends Component {
 									</button>
 								</div>
 							</div>
-						</div>
-
-						<div className="control-group count-group">
-							<label htmlFor="count">Number of Tiles</label>
-							<input
-								type="number"
-								name="count"
-								id="count"
-								value={this.state.count}
-								onChange={this.handleCountChange}
-							/>
+							
+							<button
+								className="btn btn-blank"
+								id="toggle-exp"
+								onClick={this.toggleExperimental}
+								title='Experimental features that could be unstable'
+							>
+								<i className="fas fa-flask"></i>
+							</button>
 						</div>
 					</aside>
 
