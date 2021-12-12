@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/nopixel-var-minigame/static/css/main.ed4612ef.chunk.css",
-    "main.js": "/nopixel-var-minigame/static/js/main.52719ff1.chunk.js",
-    "main.js.map": "/nopixel-var-minigame/static/js/main.52719ff1.chunk.js.map",
+    "main.css": "/nopixel-var-minigame/static/css/main.c0a5c7d4.chunk.css",
+    "main.js": "/nopixel-var-minigame/static/js/main.be3f2e39.chunk.js",
+    "main.js.map": "/nopixel-var-minigame/static/js/main.be3f2e39.chunk.js.map",
     "runtime-main.js": "/nopixel-var-minigame/static/js/runtime-main.2099a232.js",
     "runtime-main.js.map": "/nopixel-var-minigame/static/js/runtime-main.2099a232.js.map",
     "static/js/2.a84a9d00.chunk.js": "/nopixel-var-minigame/static/js/2.a84a9d00.chunk.js",
     "static/js/2.a84a9d00.chunk.js.map": "/nopixel-var-minigame/static/js/2.a84a9d00.chunk.js.map",
     "index.html": "/nopixel-var-minigame/index.html",
-    "static/css/main.ed4612ef.chunk.css.map": "/nopixel-var-minigame/static/css/main.ed4612ef.chunk.css.map",
+    "static/css/main.c0a5c7d4.chunk.css.map": "/nopixel-var-minigame/static/css/main.c0a5c7d4.chunk.css.map",
     "static/js/2.a84a9d00.chunk.js.LICENSE.txt": "/nopixel-var-minigame/static/js/2.a84a9d00.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.2099a232.js",
     "static/js/2.a84a9d00.chunk.js",
-    "static/css/main.ed4612ef.chunk.css",
-    "static/js/main.52719ff1.chunk.js"
+    "static/css/main.c0a5c7d4.chunk.css",
+    "static/js/main.be3f2e39.chunk.js"
   ]
 }
