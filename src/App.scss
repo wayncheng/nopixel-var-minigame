@@ -1,8 +1,11 @@
-$bg        : #15181d;
-$main      : #20272d;
-$btn       : #2c465d;
-$btn-dark  : #20282e;
-$btn-active: #425e79;
+$bg           : #15181d;
+$main         : #20272d;
+$btn          : #2c465d;
+$btn-dark     : #20282e;
+$btn-active   : #425e79;
+$tile         : #203957;
+$tile-selected: #2d3f55;
+$area         : #242833;
 
 *,
 *::before,
@@ -47,22 +50,24 @@ body {
 
 .boundary {
 	width           : 90vw;
-	max-height      : 80vh;
-	background-color: $main;
+	max-height      : 70vh;
+	background-color: $area;
 	color           : #fff;
 	position        : relative;
 	aspect-ratio    : 16/9;
 }
 
 .tile {
-	font-size          : 2rem;
-	font-size          : 5vw;
-	height             : 2em;
-	line-height        : 2em;
-	width              : 2em;
+	// $size              : 2em;
+	// font-size          : 4vw;
+	$size              : 1.5em;
+	font-size          : 1em;
+	height             : $size;
+	line-height        : $size;
+	width              : $size;
 	padding            : 0;
 	margin             : 0;
-	background-color   : $btn;
+	background-color   : $tile;
 	text-align         : center;
 	position           : absolute;
 	transform          : translate3d(0, 0, 0);
@@ -71,22 +76,21 @@ body {
 	-moz-user-select   : none;
 	-ms-user-select    : none;
 	user-select        : none;
+	font-weight        : 400;
 
 	&.correct {
-		background-color: $btn-active;
+		background-color: $tile-selected;
 	}
 }
 
-.is-playing {
-	.tile {
-		color: transparent;
-	}
+.is-playing .tile {
+	color: transparent;
 }
-
-.show-outlines {
-	.tile {
-		border: 2px solid rgba(#fff,0.24)
-	}
+.show-outlines .tile {
+	border: 2px solid rgba(#fff,0.24)
+}
+.show-numbers .tile {
+	color: #fff !important;
 }
 
 .overlay {
@@ -95,7 +99,7 @@ body {
 	position        : absolute;
 	top             : 0;
 	left            : 0;
-	background-color: rgba($main, 1);
+	background-color: $area;
 	display         : flex;
 	flex-direction  : column;
 	align-items     : center;
@@ -166,13 +170,17 @@ body {
 }
 
 .toolbar {
+	font-size      : 1rem;
+	position       : absolute;
+	top            : 100%;
+	left           : 0;
+	width          : 100%;
 	display        : flex;
 	flex-direction : row;
 	align-items    : center;
 	justify-content: space-between;
 	padding        : .5rem 0;
 	color          : #fff;
-	width          : 100%;
 	font-weight    : 500;
 
 	.count-group {

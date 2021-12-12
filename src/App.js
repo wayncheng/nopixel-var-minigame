@@ -12,15 +12,17 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			index: 1,
-			failed: false,
-			passed: false,
-			stage: 'pregame', // learning, playing, postgame
-			status: '',
-			count: 6,
-			countdown: null, // setTimeout for hiding numbers after some time
+			index           : 1,
+			failed          : false,
+			passed          : false,
+			stage           : 'pregame',   // learning, playing, postgame
+			status          : '',
+			count           : 6,
+			tileSize        : 80,
+			countdown       : null,        // setTimeout for hiding numbers after some time
 			showExperimental: false,
-			showOutlines: false,
+			showOutlines    : false,
+			showNumbers     : false,
 		};
 	}
 
@@ -33,16 +35,28 @@ class App extends Component {
 		});
 	};
 
-	generateItinerary = () => {
-		const $bound = document.getElementById('boundary');
-		const $tile = document.getElementById('tile-1');
+	generateDestination = (limitX, limitY, minDuration = 3, maxDuration = 5) => {
+		const config = {
+			x: Math.round(limitX * Math.random()),
+			y: Math.round(limitY * Math.random()),
+			duration: gsap.utils.random(minDuration, maxDuration, 1),
+		};
+		return config;
+	};
 
-		const boundX = $bound.offsetWidth;
-		const boundY = $bound.offsetHeight;
-		const tileX = $tile.offsetWidth;
-		const tileY = $tile.offsetHeight;
-		const limitX = boundX - tileX;
-		const limitY = boundY - tileY;
+	generateItinerary = (boundX, boundY, tileSize = 80) => {
+		// const $bound = document.getElementById('boundary');
+		// const $tile = document.getElementById('tile-1');
+
+		// const boundX = $bound.offsetWidth;
+		// const boundY = $bound.offsetHeight;
+
+
+		// const tileX = $tile.offsetWidth;
+		// const tileY = $tile.offsetHeight;
+
+		const limitX = boundX - (1.5 * tileSize);
+		const limitY = boundY - (1.5 * tileSize);
 
 		const {
 			maxDuration,
@@ -66,20 +80,18 @@ class App extends Component {
 			totalDuration,
 		};
 		// console.log('output:', output);
-
 		return output;
 	};
 
-	generateDestination = (limitX, limitY, minDuration = 3, maxDuration = 5) => {
-		const config = {
-			x: Math.round(limitX * Math.random()),
-			y: Math.round(limitY * Math.random()),
-			duration: gsap.utils.random(minDuration, maxDuration, 1),
-		};
-		return config;
-	};
-
 	setItinerary = () => {
+		// Get game area size and use it as a possible range
+		const $bound = document.getElementById('boundary');
+		const boundX = $bound.offsetWidth;
+		const boundY = $bound.offsetHeight;
+		// Calculate tile size
+		const tileSize = Math.round(boundX / 18);
+
+
 		// For each number, generate animations then add each animations to the timeline
 		for (let i = 1; i <= this.state.count; i++) {
 			// Selector for the tile we are animating
@@ -88,12 +100,12 @@ class App extends Component {
 			// Create a timeline for each tile
 			const tl = gsap.timeline({
 				autoRemoveChildren: true,
-				repeat: 3,
-				yoyo: true,
+				repeat: 9,
+				// yoyo: true,
 			});
 
 			// Generate a randomized path and starting point for each tile
-			const itinerary = this.generateItinerary();
+			const itinerary = this.generateItinerary(boundX, boundY,tileSize);
 			const { data, start } = itinerary;
 
 			// Move the tile to starting point (to avoid having them start bunched in a corner)
@@ -113,6 +125,7 @@ class App extends Component {
 			failed: false,
 			passed: false,
 			index: 1,
+			tileSize,
 		});
 
 	};
@@ -148,7 +161,7 @@ class App extends Component {
 				});
 			} else {
 				// When the tile's number is lower than the current target
-				console.log('Repeat?')
+				console.log('Repeat?');
 			}
 		}
 	};
@@ -209,11 +222,14 @@ class App extends Component {
 				'is-playing': this.state.stage === 'playing',
 				'is-learning': this.state.stage === 'learning',
 				'show-outlines': this.state.showOutlines === true,
+				'show-numbers': this.state.showNumbers === true,
 			})}>
 				<main className="container">
 					<h1>NoPixel VAR Hacking Minigame</h1>
 
-					<div id="boundary" className="boundary">
+					<div id="boundary" className="boundary" style={{
+						fontSize: this.state.tileSize
+					}}>
 						{Array(this.state.count).fill('😎').map((x, i) => {
 							const num = i + 1;
 							// Stack tiles so the lowest number is on top. The formula below will result 
@@ -267,67 +283,78 @@ class App extends Component {
 						</div>
 
 
+						{/* Toolbar for Options and Controls ========================================
+							  - Positioned below the game area
+						*/}
+
+						<aside id='controls' className='toolbar'>
+
+							<div className="control-group count-group">
+								<input
+									type="number"
+									name="count"
+									id="count"
+									value={this.state.count}
+									onChange={this.handleCountChange}
+								/>
+								<label htmlFor="count">Number of Tiles</label>
+							</div>
+
+
+							<div className="control-group right-group">
+
+								<div className={classNames("control-group test-group", { hidden: !this.state.showExperimental })}>
+									<button
+										id="outlines"
+										className="btn btn-blank"
+										onClick={this.toggleOutlines}
+										title="Show outlines"
+									>
+										<i className="fas fa-vector-square"></i>
+									</button>
+									<button
+										id="numbers"
+										className="btn btn-blank"
+										onClick={this.toggleNumbers}
+										title="Show numbers"
+									>
+										<i className="far fa-eye"></i>
+									</button>
+
+									<div className={classNames("control-group playback-group")}>
+										<button
+											id="resume"
+											className='btn btn-blank'
+											onClick={this.handleResume}
+											title="Resume movement"
+										>
+											<i className="fas fa-play"></i>
+										</button>
+
+										<button
+											id="pause"
+											className='btn btn-blank'
+											onClick={this.handlePause}
+											title="Pause movement"
+										>
+											<i className="fas fa-pause"></i>
+										</button>
+									</div>
+								</div>
+
+								<button
+									className="btn btn-blank"
+									id="toggle-exp"
+									onClick={this.toggleExperimental}
+									title='Experimental features that could be unstable'
+								>
+									<i className="fas fa-flask"></i>
+								</button>
+							</div>
+						</aside>
 					</div>
 
 
-					{/* Toolbar for Options and Controls ========================================*/}
-					<aside id='controls' className='toolbar'>
-
-						<div className="control-group count-group">
-							<input
-								type="number"
-								name="count"
-								id="count"
-								value={this.state.count}
-								onChange={this.handleCountChange}
-							/>
-							<label htmlFor="count">Number of Tiles</label>
-						</div>
-
-
-						<div className="control-group right-group">
-
-							<div className={classNames("control-group test-group", { hidden: !this.state.showExperimental })}>
-								<button 
-									id="outlines" 
-									className="btn btn-blank" 
-									onClick={this.toggleOutlines}
-									title="Show outlines"
-								>
-									<i className="fas fa-vector-square"></i>
-								</button>
-
-								<div className={classNames("control-group playback-group")}>
-									<button 
-										id="resume" 
-										className='btn btn-blank' 
-										onClick={this.handleResume}
-										title="Resume movement"
-									> 
-										<i className="fas fa-play"></i> 
-									</button>
-									
-									<button 
-										id="pause" 
-										className='btn btn-blank' 
-										onClick={this.handlePause}
-										title="Pause movement"
-									> 
-										<i className="fas fa-pause"></i> 
-									</button>
-								</div>
-							</div>
-							
-							<button
-								className="btn btn-blank"
-								id="toggle-exp"
-								onClick={this.toggleExperimental}
-								title='Experimental features that could be unstable'
-							>
-								<i className="fas fa-flask"></i>
-							</button>
-						</div>
-					</aside>
 
 				</main>
 			</div>
@@ -335,6 +362,12 @@ class App extends Component {
 	};
 
 
+	toggleNumbers = event => {
+		event.preventDefault();
+		this.setState({
+			showNumbers: !this.state.showNumbers,
+		});
+	};
 	toggleOutlines = event => {
 		event.preventDefault();
 		this.setState({
